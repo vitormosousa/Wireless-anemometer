@@ -1,0 +1,135 @@
+<!DOCTYPE html> <!-- saved from
+url=(0073)https://www.cssscript.com/demo/canvas-based-html5-gauge-library-gauge-js/
+--> <html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Anemómetro</title>
+	<!--
+	<link href="./HTML5 Canvas Gauge Examples_files/sticky.css" rel="stylesheet" type="text/css">
+	-->
+	<link href="sticky.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="fonts.css">
+	<script type="text/javascript" src="RoundBox.js">
+	</script>
+	<script src="gauge.min.js"></script>
+</head>
+<body style="background: #222">
+	<h1 style="text-align:center; margin:10px auto 30px auto; color:#fff;">Anemómetro</h1>
+
+	<canvas id="canvasSpeed" width="400" height="80" ></canvas>
+	<hr>
+	<div id="canvas"></div>
+  <hr>
+	<p style="position:absolute; left:200px"> <input type=button onClick="location.href='config.html'" value='Configurar'></p>
+
+	<script>
+		if (!Array.prototype.forEach) {
+			Array.prototype.forEach = function(cb) {
+				var i = 0, s = this.length;
+				for (; i < s; i++) {
+					cb && cb(this[i], i, this);
+				}
+			}
+		}
+
+		document.fonts && document.fonts.forEach(function(font) {
+			font.loaded.then(function() {
+				if (font.family.match(/Led/)) {
+					document.gauges.forEach(function(gauge) {
+						gauge.update();
+						gauge.options.renderTo.style.visibility = 'visible';
+					});
+				}
+			});
+		});
+
+		var timers = [];
+		function stopGaugesAnimation() {
+			timers.forEach(function(timer) {
+				clearInterval(timer);
+			});
+		}
+
+		 // Gets ADC value at every one second
+		setInterval(function() {GetADC();}, 1000);
+
+		function GetADC() {
+			var xhttp = new XMLHttpRequest();
+			var adc=0;
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var data=this.responseText.split("&");
+					gauge.value = Number(data[0]);
+					box.update(data[1]);
+				}
+			};
+			xhttp.open("GET", "/getADC", false);
+			xhttp.send();
+		}
+
+
+		var gauge = new RadialGauge({
+		  renderTo: document.createElement('canvas'),
+		  valueInt:"2",
+		  valueDec:"0",
+		  fontValueSize:"30",
+		  startAngle:"0",
+		  ticksAngle:"360",
+		  width:"300",
+		  height:"300",
+		  units:"Km/h",
+		  title:"Nós",
+		  value:"0",
+		  valueBoxWidth:"5",
+		  animateOnInit:"true",
+		  animatedValue:"true",
+		  minValue:"-180",
+		  maxValue:"180",
+		  majorTicks:['180','150','120','90','60','30','0','30','60','90','120','150',''],
+		  minorTicks:"3",
+		  strokeTicks:"true",
+
+		  highlights:[
+			{from: -180, to: 0, color: 'rgba(255, 0, 0, .75)'},
+			{from: 0, to: 180, color: 'rgba(0, 255, 0, .75)'}
+		  ],
+		  colorPlate:"#222" ,
+		  colorMajorTicks:"#f5f5f5" ,
+		  colorMinorTicks:"#ddd",
+		  colorTitle:"#fff",
+		  colorUnits:"#ccc",
+		  colorNumbers:"#eee",
+		  colorNeedleStart:"rgba(240, 128, 128, 1)",
+		  colorNeedleEnd:"rgba(255, 160, 122, .9)",
+		  valueBox:"true",
+		  fontValue:"Led",
+		  fontNumbers:"Led",
+		  animatedValue:"true",
+		  borders:"false",
+		  borderShadowWidth:"0",
+		  needleType:"arrow",
+		  needleWidth:"2",
+		  needleCircleSize:"7",
+		  needleCircleOuter:"true",
+		  needleCircleInner:"false",
+		  animationDuration:"500",
+		  animationRule:"linear",
+		  colorNeedleShadowDown:"#333",
+		  style:"width: 300px; height: 300px;"
+		})
+
+		document.getElementById("canvas").appendChild(gauge.options.renderTo);
+		gauge.draw();
+		var node = document.getElementById("canvas")
+		gauge.value=50;
+
+		var box = new RoundBox("canvasSpeed", 5);
+		box.setPosition(100,10);
+		box.draw();
+	</script>
+
+</body>
+</html>

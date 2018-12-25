@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CONFIG</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="sticky.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="fonts.css">
+</head>
+
+<body onload="getConfig()" style="background-color:#222; color:white;">
+	<h2>Configuração</h2>
+	<form style="line-height:1.0" name= "form_id" action="/updateConfig", method="POST" >
+		<h3>Direcção</h3>
+    		<div style="position:relative; left:20px; line-height:1.0" >
+		      Angulo de desvio:   <input type="text" name="angulo"  maxlength="4" size="6">
+      </div>
+      <br>
+
+		<h3>Constante de velocidade</h3>
+		<div style="position:relative; left:20px; line-height:2.0" >
+				Numerador:   <input type="text" name="numerador"  maxlength="4" size="6"><br>
+				Denominador:   <input type="text" name="denominador" maxlength="4" size="6"><br>
+		</div>
+
+		<h3>Leitura analogica</h3>
+    <div style="position:relative; left:20px; line-height:2.0" >
+    		Valor minimo do rumo na sessão :  <span id= "read_minimoADC_x"></span>   <input type="text" name="minimoADC_x" maxlength="4" size="6"><br>
+        Valor minimo do través na sessão :  <span id= "read_minimoADC_y"></span>   <input type="text" name="minimoADC_y" maxlength="4" size="6"><br>
+        Valor maximo do rumo na sessão :  <span id= "read_maximoADC_x"></span>   <input type="text" name="maximoADC_x" maxlength="4" size="6"><br>
+        Valor maximo do través na sessão :  <span id= "read_maximoADC_y"></span>   <input type="text" name="maximoADC_y" maxlength="4" size="6"><br>
+      </div>
+		<br>
+		<input type= "submit", value = "Gravar">
+	</form>
+
+	<script type="text/javascript">
+		function start(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)		{
+			oForm = document.forms["form_id"];
+      var elemObj;
+			elemObj=oForm.elements["angulo"];
+			elemObj.value= a1 ;
+
+			elemObj=oForm.elements["numerador"];
+			elemObj.value= a2 ;
+
+			elemObj=oForm.elements["denominador"];
+			elemObj.value= a3 ;
+
+			elemObj=oForm.elements["minimoADC_x"];
+			elemObj.value= a4 ;
+
+      elemObj=oForm.elements["minimoADC_y"];
+			elemObj.value= a5 ;
+
+      elemObj=oForm.elements["maximoADC_x"];
+			elemObj.value= a6 ;
+
+      elemObj=oForm.elements["maximoADC_y"];
+			elemObj.value= a7 ;
+
+
+      elemObj=document.getElementById("read_minimoADC_x");
+      elemObj.innerText=a8  ;
+
+      elemObj=document.getElementById("read_minimoADC_y");
+      elemObj.innerText=a9  ;
+
+      elemObj=document.getElementById("read_maximoADC_x");
+      elemObj.innerText=a10  ;
+
+      elemObj=document.getElementById("read_maximoADC_y");
+      elemObj.innerText=a11  ;
+
+		}
+
+		function getConfig() {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var data=this.responseText.split("&");
+					start(data[0], data[1], data[2], data[3],data[4], data[5], data[6],
+                  data[7], data[8], data[9], data[10]);
+				}
+			};
+			xhttp.open("GET", "/getConfig", false);
+			xhttp.send();
+		}
+
+		function sendConfig(value){
+			var request = new XMLHttpRequest();
+			request.open("POST", "https://foo.bar/");
+			request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			request.send(encodeURI(slider)+"="+value);
+		}
+  //start("1","2", "3", "4");
+	</script>
+</body>
+</html>
